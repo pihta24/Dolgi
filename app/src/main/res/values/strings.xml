@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Dolgi</string>
+    <string-array name="themes">
+        <item>Светлая</item>
+        <item>Темная</item>
+    </string-array>
+</resources>

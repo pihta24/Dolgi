@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorBackgroundDark"
+    tools:context=".Entrance">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_margin="10dp"
+                android:id="@+id/imageView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                app:srcCompat="@drawable/ic_remove_white_24dp" />
+
+            <ImageView
+                android:layout_margin="10dp"
+                android:id="@+id/imageView3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                app:srcCompat="@drawable/ic_remove_white_24dp" />
+
+            <ImageView
+                android:layout_margin="10dp"
+                android:id="@+id/imageView4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                app:srcCompat="@drawable/ic_remove_white_24dp" />
+
+            <ImageView
+                android:layout_margin="10dp"
+                android:id="@+id/imageView5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                app:srcCompat="@drawable/ic_remove_white_24dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/button1"
+                android:layout_width="wrap_content"
+                android:layout_margin="10dp"
+                app:maxImageSize="40dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:clickable="true"
+                app:backgroundTint="#CCCCCC"
+                app:fabCustomSize="80dp"
+                app:srcCompat="@drawable/number_1" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/button2"
+                android:layout_margin="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:clickable="true"
+                app:backgroundTint="#CCCCCC"
+                app:maxImageSize="40dp"
+                app:fabCustomSize="80dp"
+                app:srcCompat="@drawable/number_2" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/button3"
+                android:layout_margin="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                app:maxImageSize="40dp"
+                app:backgroundTint="#CCCCCC"
+                android:clickable="true"
+                app:fabCustomSize="80dp"
+                app:srcCompat="@drawable/number_3" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/button4"
+                android:layout_margin="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:clickable="true"
+                app:backgroundTint="#CCCCCC"
+                app:maxImageSize="40dp"
+                app:fabCustomSize="80dp"
+                app:srcCompat="@drawable/number_4" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/button5"
+                android:layout_margin="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:clickable="true"
+                app:backgroundTint="#CCCCCC"
+                app:maxImageSize="40dp"
+                app:fabCustomSize="80dp"
+                app:srcCompat="@drawable/number_5" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/button6"
+                android:layout_margin="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:clickable="true"
+                app:backgroundTint="#CCCCCC"
+                app:maxImageSize="40dp"
+                app:fabCustomSize="80dp"
+                app:srcCompat="@drawable/number_6" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/button7"
+                android:layout_margin="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                app:backgroundTint="#CCCCCC"
+                android:clickable="true"
+                app:maxImageSize="40dp"
+                app:fabCustomSize="80dp"
+                app:srcCompat="@drawable/number_7" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/button8"
+                android:layout_margin="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                app:backgroundTint="#CCCCCC"
+                android:clickable="true"
+                app:maxImageSize="40dp"
+                app:fabCustomSize="80dp"
+                app:srcCompat="@drawable/number_8" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/button9"
+                android:layout_margin="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:clickable="true"
+                app:backgroundTint="#CCCCCC"
+                app:maxImageSize="40dp"
+                app:fabCustomSize="80dp"
+                app:srcCompat="@drawable/number_9" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/button_cancel"
+                android:layout_margin="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                app:backgroundTint="@color/colorButtonDelete"
+                android:clickable="true"
+                app:fabCustomSize="80dp"
+                app:maxImageSize="40dp"
+                app:srcCompat="@drawable/ic_close_black_24dp" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/button0"
+                android:layout_margin="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:maxImageSize="40dp"
+                app:backgroundTint="#CCCCCC"
+                app:fabCustomSize="80dp"
+                android:layout_weight="1"
+                android:clickable="true"
+                app:srcCompat="@drawable/number_0" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/button_delete"
+                android:layout_margin="10dp"
+                android:layout_width="wrap_content"
+                app:fabCustomSize="80dp"
+                app:maxImageSize="40dp"
+                android:layout_height="wrap_content"
+                app:backgroundTint="@color/colorButtonCancel"
+                android:layout_weight="1"
+                android:clickable="true"
+                app:srcCompat="@drawable/ic_keyboard_backspace_black_24dp" />
+        </LinearLayout>
+    </LinearLayout>
+</RelativeLayout>
