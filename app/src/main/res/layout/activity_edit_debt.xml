@@ -12,56 +12,115 @@
         android:id="@+id/head"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
         android:text="Редактирование долга"
+        android:layout_centerHorizontal="true"
         android:textColor="#FFFFFF"
-        android:layout_margin="10dp"
-        android:textSize="30sp"
-        android:layout_centerHorizontal="true"/>
+        android:textSize="30sp" />
 
-    <TextView
-        android:id="@+id/idE"
+    <androidx.cardview.widget.CardView
         android:layout_below="@id/head"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="#FFFFFF"
-        android:layout_margin="10dp"
-        android:text="Id" />
+        android:id="@+id/debt_card"
+        android:layout_margin="15dp"
+        app:cardCornerRadius="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
 
-    <EditText
-        android:id="@+id/nameE"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:layout_below="@id/idE"
-        android:layout_margin="10dp"
-        android:inputType="textPersonName"
-        android:textColor="#FFFFFF"
-        android:textColorHint="#d4d2d6"
-        android:hint="Name" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-    <EditText
-        android:id="@+id/lastName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:layout_below="@id/nameE"
-        android:textColorHint="#d4d2d6"
-        android:layout_margin="10dp"
-        android:textColor="#FFFFFF"
-        android:hint="Last name" />
+            <TextView
+                android:id="@+id/text_name"
+                android:layout_width="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginTop="20dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/idE"
+                android:text="Имя:" />
 
-    <EditText
-        android:id="@+id/debtE"
-        android:layout_below="@id/lastName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:layout_margin="10dp"
-        android:textColor="#FFFFFF"
-        android:textColorHint="#d4d2d6"
-        android:inputType="numberDecimal"
-        android:hint="Debt"/>
+            <TextView
+                android:id="@+id/text_last_name"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginTop="20dp"
+                android:layout_below="@id/nameE"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Фамилия:" />
+
+            <TextView
+                android:id="@+id/text_debt"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginTop="20dp"
+                android:layout_below="@id/lastName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Долг:" />
+
+            <EditText
+                android:id="@+id/nameE"
+                android:layout_centerHorizontal="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="10dp"
+                android:ems="10"
+                android:layout_below="@id/idE"
+                android:inputType="textPersonName"
+                android:textColor="#FFFFFF"
+                android:textColorHint="#d4d2d6" />
+
+            <EditText
+                android:id="@+id/debtE"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@id/lastName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="10dp"
+                android:ems="10"
+                android:inputType="numberDecimal"
+                android:textColor="#FFFFFF"
+                android:textColorHint="#d4d2d6" />
+
+            <EditText
+                android:id="@+id/lastName"
+                android:layout_centerHorizontal="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="10dp"
+                android:ems="10"
+                android:layout_below="@id/nameE"
+                android:inputType="textPersonName"
+                android:textColor="#FFFFFF"
+                android:textColorHint="#d4d2d6" />
+
+            <TextView
+                android:id="@+id/idE"
+                android:layout_centerHorizontal="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="10dp"
+                android:text="Id"
+                android:textColor="#FFFFFF" />
+        </RelativeLayout>
+    </androidx.cardview.widget.CardView>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/accept"

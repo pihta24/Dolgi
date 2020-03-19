@@ -29,7 +29,8 @@ public class MyDatabase extends SQLiteOpenHelper {
                 COL_ID+" INTEGER PRIMARY KEY AUTOINCREMENT," +
                 COL_NAME+" VARCHAR," +
                 COL_LAST_NAME+" VARCHAR," +
-                COL_SUM+" REAL" +
+                COL_SUM+" REAL," +
+                "curr VARCHAR"+
                 ")");
         db.execSQL("CREATE TABLE settings(parameter VARCHAR(50), value VARCHAR(50))");
         ContentValues content = new ContentValues();
@@ -67,7 +68,8 @@ public class MyDatabase extends SQLiteOpenHelper {
                 COL_ID+" INTEGER PRIMARY KEY AUTOINCREMENT," +
                 COL_NAME+" VARCHAR," +
                 COL_LAST_NAME+" VARCHAR," +
-                COL_SUM+" REAL" +
+                COL_SUM+" REAL," +
+                "curr VARCHAR"+
                 ")");
         ContentValues content = new ContentValues();
         content.put("parameter", "colorPrimary");

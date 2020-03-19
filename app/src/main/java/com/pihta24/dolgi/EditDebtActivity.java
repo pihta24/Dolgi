@@ -2,10 +2,12 @@ package com.pihta24.dolgi;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -27,6 +29,9 @@ public class EditDebtActivity extends AppCompatActivity implements View.OnClickL
     SQLiteDatabase database_w;
     TextView id;
     TextView head;
+    TextView text_name;
+    TextView text_last_name;
+    TextView text_debt;
     EditText name;
     EditText lastName;
     EditText debt;
@@ -34,6 +39,9 @@ public class EditDebtActivity extends AppCompatActivity implements View.OnClickL
     FloatingActionButton accept;
     FloatingActionButton cancel;
     FloatingActionButton delete;
+    CardView debt_card;
+    int primaryColor;
+    int invertedColor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,24 +68,37 @@ public class EditDebtActivity extends AppCompatActivity implements View.OnClickL
         delete = findViewById(R.id.delete);
         layout = findViewById(R.id.layout_edit_debt);
         head = findViewById(R.id.head);
+        text_name = findViewById(R.id.text_name);
+        text_last_name = findViewById(R.id.text_last_name);
+        text_debt = findViewById(R.id.text_debt);
+        debt_card = findViewById(R.id.debt_card);
 
         accept.setOnClickListener(this);
         cancel.setOnClickListener(this);
         delete.setOnClickListener(this);
 
-        Cursor cursor = database_r.query("settings", new String[]{"value"}, "parameter = 'theme'", null, null, null, null);
+        Cursor cursor = database_r.query("settings", new String[]{"value"}, "parameter = 'colorPrimary'", null, null, null, null);
         cursor.moveToFirst();
+        primaryColor = Integer.parseInt(cursor.getString(cursor.getColumnIndex("value")));
+        cursor = database_r.query("settings", new String[]{"value"}, "parameter = 'colorInverted'", null, null, null, null);
+        cursor.moveToFirst();
+        invertedColor = Integer.parseInt(cursor.getString(cursor.getColumnIndex("value")));
+        cursor.close();
 
 
-        id.setTextColor(Color.parseColor("#000000"));
-        name.setTextColor(Color.parseColor("#000000"));
-        name.setHintTextColor(Color.parseColor("#5b646e"));
-        lastName.setTextColor(Color.parseColor("#000000"));
-        lastName.setHintTextColor(Color.parseColor("#5b646e"));
-        debt.setTextColor(Color.parseColor("#000000"));
-        debt.setHintTextColor(Color.parseColor("#5b646e"));
-        head.setTextColor(Color.parseColor("#000000"));
-        layout.setBackgroundColor(Color.parseColor("#FFFFFF"));
+        id.setTextColor(invertedColor);
+        name.setTextColor(invertedColor);
+        name.setBackgroundTintList(ColorStateList.valueOf(invertedColor));
+        lastName.setTextColor(invertedColor);
+        lastName.setBackgroundTintList(ColorStateList.valueOf(invertedColor));
+        debt.setTextColor(invertedColor);
+        debt.setBackgroundTintList(ColorStateList.valueOf(invertedColor));
+        text_name.setTextColor(invertedColor);
+        text_last_name.setTextColor(invertedColor);
+        text_debt.setTextColor(invertedColor);
+        head.setTextColor(invertedColor);
+        layout.setBackgroundColor(primaryColor);
+        if (primaryColor < 0xffeeeeee) debt_card.setCardBackgroundColor(primaryColor + 0xff111111);
 
 
         switch (info.getIntExtra("id", -1)) {
