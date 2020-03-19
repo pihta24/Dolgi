@@ -9,7 +9,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.RelativeLayout;
+import android.widget.SeekBar;
 import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -19,6 +23,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
     FloatingActionButton confirm;
     FloatingActionButton exit;
     Spinner spinner;
+    SeekBar seekBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,22 +34,17 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
         confirm = findViewById(R.id.confirm);
         exit = findViewById(R.id.exit);
         spinner = findViewById(R.id.spinner);
+        seekBar = findViewById(R.id.seekBar);
 
         SQLiteDatabase database = new MyDatabase(this).getReadableDatabase();
         Cursor cursor = database.query("settings", new String[]{"value"}, "parameter = 'theme'", null, null, null, null);
         cursor.moveToFirst();
-        switch (cursor.getString(cursor.getColumnIndex("value"))){
-            case "white":
-                spinner.setSelection(0);
-                break;
-            case "black":
-                spinner.setSelection(1);
-        }
         database.close();
 
         pin.setOnClickListener(this);
         confirm.setOnClickListener(this);
         exit.setOnClickListener(this);
+
     }
 
     @Override
@@ -59,14 +59,11 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
                 Intent intent = new Intent(this, MainActivity.class);
                 SQLiteDatabase database = new MyDatabase(this).getWritableDatabase();
                 ContentValues content = new ContentValues();
-                switch (spinner.getSelectedItem().toString()){
-                    case "Светлая":
-                        content.put("value", "white");
-                        break;
-                    case "Темная":
-                        content.put("value", "black");
-                }
-                database.update("settings", content, "parameter = 'theme'", null);
+                content.put("value", Integer.toHexString(0xff000000 + (int)(seekBar.getProgress() * 2.55) * 0x10000 + (int)(seekBar.getProgress() * 2.55) * 0x100 + (int)(seekBar.getProgress() * 2.55)));
+                database.update("settings", content, "parameter = 'colorPrimary'",null);
+                content.clear();
+                content.put("value", Integer.toHexString(0xff000000 + (255-(int)(seekBar.getProgress() * 2.55)) * 0x10000 + (255-(int)(seekBar.getProgress() * 2.55)) * 0x100 + (255-(int)(seekBar.getProgress() * 2.55))));
+                database.update("settings", content, "parameter = 'colorInverted'",null);
                 intent.putExtra("exit_code", -1);
                 database.close();
                 startActivity(intent);

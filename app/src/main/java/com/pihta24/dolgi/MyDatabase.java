@@ -10,7 +10,7 @@ import androidx.annotation.Nullable;
 public class MyDatabase extends SQLiteOpenHelper {
 
     public final static String DB_NAME = "debts.db";
-    public final static int DB_VERSION = 6;
+    public final static int DB_VERSION = 7;
 
     public final static String TB_DEB_NAME = "debts";
     public final static String COL_ID = "debt_id";
@@ -32,8 +32,12 @@ public class MyDatabase extends SQLiteOpenHelper {
                 ")");
         db.execSQL("CREATE TABLE settings(parameter VARCHAR(50), value VARCHAR(50))");
         ContentValues content = new ContentValues();
-        content.put("parameter", "theme");
-        content.put("value", "black");
+        content.put("parameter", "colorPrimary");
+        content.put("value", "0x00000000");
+        db.insert("settings", null, content);
+        content.clear();
+        content.put("parameter", "colorInverted");
+        content.put("value", "0x00000000");
         db.insert("settings", null, content);
         content.clear();
         content.put("parameter", "pin_activated");
@@ -48,6 +52,15 @@ public class MyDatabase extends SQLiteOpenHelper {
                 COL_LAST_NAME+" VARCHAR," +
                 COL_SUM+" REAL" +
                 ")");
+        ContentValues content = new ContentValues();
+        content.put("parameter", "colorPrimary");
+        content.put("value", "0x00000000");
+        db.insert("settings", null, content);
+        content.clear();
+        content.put("parameter", "colorInverted");
+        content.put("value", "0x00000000");
+        db.insert("settings", null, content);
+        content.clear();
     }
 
     @Override

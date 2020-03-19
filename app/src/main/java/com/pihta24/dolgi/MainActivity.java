@@ -30,6 +30,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     ImageView background;
     RelativeLayout layout;
     FloatingActionButton settings_button;
+    String primaryColor;
+    String invertedColor;
     int cardColor = Color.parseColor("#C0C0C0");
     int textColor = Color.parseColor("#000000");
 
@@ -66,15 +68,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         rw.setLayoutManager(new LinearLayoutManager(this));
         rw.setAdapter(adapter);
 
-
-
-        if (cursor.getString(cursor.getColumnIndex("value")).equals("white")){
-            theme.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#333333")));
-            background.setImageResource(R.drawable.ic_android_black_24dp);
-            layout.setBackgroundColor(Color.parseColor("#FFFFFF"));
-            cardColor = Color.parseColor("#333333");
-            textColor = Color.parseColor("#FFFFFF");
-        }
+        theme.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#333333")));
+        background.setImageResource(R.drawable.ic_android_black_24dp);
+        layout.setBackgroundColor(Color.parseColor("#FFFFFF"));
+        cardColor = Color.parseColor("#333333");
+        textColor = Color.parseColor("#FFFFFF");
         adapter.update(cardColor, textColor);
         cursor.close();
         switch (info.getIntExtra("exit_code", -2)){

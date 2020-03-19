@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/test"
     tools:context=".Settings">
 
 
@@ -20,7 +21,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="#FFFFFF"
-            android:text="Настройки пин-кода"
+            android:text="Настройка пин-кода"
             android:textSize="25sp" />
 
         <Button
@@ -55,7 +56,15 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="#BBBBBB"
+            android:visibility="gone"
             android:entries="@array/themes"/>
+
+        <SeekBar
+            android:id="@+id/seekBar"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_margin="8dp"
+            android:layout_weight="2" />
 
     </LinearLayout>
 
@@ -80,5 +89,12 @@
         android:layout_alignParentEnd="true"
         app:backgroundTint="@color/colorButtonAdd"
         app:srcCompat="@drawable/ic_check_black_24dp" />
+
+    <TextView
+        android:id="@+id/textView4"
+        android:textColor="#FFFFFF"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView" />
 
 </RelativeLayout>
