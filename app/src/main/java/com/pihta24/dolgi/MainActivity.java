@@ -13,6 +13,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageView;
@@ -21,30 +22,46 @@ import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.util.regex.Pattern;
+
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, View.OnSystemUiVisibilityChangeListener {
 
     MyDatabase myDatabase;
     MyAdapter adapter;
     FloatingActionButton add;
-    FloatingActionButton theme;
-    ImageView background;
     RelativeLayout layout;
     FloatingActionButton settings_button;
-    String primaryColor;
-    String invertedColor;
-    int cardColor = Color.parseColor("#C0C0C0");
-    int textColor = Color.parseColor("#000000");
+    int primaryColor;
+    int invertedColor;
+    int cardColor;
+    int textColor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        setContentView(R.layout.activity_main);
+
+
+        add = findViewById(R.id.add);
+        layout = findViewById(R.id.layout_main);
+        settings_button = findViewById(R.id.settings);
+
         Intent info = getIntent();
 
         myDatabase = new MyDatabase(this);
+
         SQLiteDatabase database = myDatabase.getReadableDatabase();
-        Cursor cursor = database.query("settings", new String[]{"value"}, "parameter = 'theme'", null, null, null, null);
+
+        Cursor cursor = database.query("settings", new String[]{"value"}, "parameter = 'colorPrimary'", null, null, null, null);
         cursor.moveToFirst();
+        primaryColor = Integer.parseInt(cursor.getString(cursor.getColumnIndex("value")));
+        cardColor =Integer.parseInt(cursor.getString(cursor.getColumnIndex("value")));
+        cursor = database.query("settings", new String[]{"value"}, "parameter = 'colorInverted'", null, null, null, null);
+        cursor.moveToFirst();
+        invertedColor = Integer.parseInt(cursor.getString(cursor.getColumnIndex("value")));
+        if (invertedColor < 0xff888888) settings_button.setImageResource(R.drawable.ic_settings_white_24dp);
+        textColor = invertedColor;
 
         adapter=new MyAdapter(this);
 
@@ -52,29 +69,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) hideSystemUI();
         getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(this);
 
-        setContentView(R.layout.activity_main);
-
-        add = findViewById(R.id.add);
-        theme = findViewById(R.id.theme);
-        background = findViewById(R.id.background);
-        layout = findViewById(R.id.layout_main);
-        settings_button = findViewById(R.id.settings);
-
         add.setOnClickListener(this);
-        theme.setOnClickListener(this);
         settings_button.setOnClickListener(this);
 
         RecyclerView rw = findViewById(R.id.recycler);
         rw.setLayoutManager(new LinearLayoutManager(this));
         rw.setAdapter(adapter);
 
-        theme.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#333333")));
-        background.setImageResource(R.drawable.ic_android_black_24dp);
-        layout.setBackgroundColor(Color.parseColor("#FFFFFF"));
-        cardColor = Color.parseColor("#333333");
-        textColor = Color.parseColor("#FFFFFF");
+        layout.setBackgroundColor(primaryColor);
+        settings_button.setBackgroundTintList(ColorStateList.valueOf(invertedColor));
         adapter.update(cardColor, textColor);
-        cursor.close();
+
         switch (info.getIntExtra("exit_code", -2)){
             case -2:{
                 cursor = database.query("settings", new String[]{"value"}, "parameter = 'pin_activated'", null, null, null, null);
@@ -102,6 +107,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         }
         info.removeExtra("exit_code");
+        cursor.close();
     }
 
     @Override
@@ -122,38 +128,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Intent intent = new Intent(this,EditDebtActivity.class);
                 intent.putExtra("id", -1);
                 startActivity(intent);
-                break;
-            }
-            case R.id.theme:{
-                SQLiteDatabase databaser = myDatabase.getReadableDatabase();
-                SQLiteDatabase databasew = myDatabase.getWritableDatabase();
-                ContentValues content = new ContentValues();
-                Cursor cursor = databaser.query("settings", new String[]{"value"}, "parameter = 'theme'", null, null, null, null);
-                cursor.moveToFirst();
-                switch (cursor.getString(cursor.getColumnIndex("value"))){
-                    case "white":{
-                        content.put("value", "black");
-                        databasew.update("settings", content, "parameter = 'theme'", null);
-                        theme.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#FFFFFF")));
-                        background.setImageResource(R.drawable.ic_android_light_24dp);
-                        layout.setBackgroundColor(Color.parseColor("#333333"));
-                        cardColor = Color.parseColor("#C0C0C0");
-                        textColor = Color.parseColor("#000000");
-                        break;
-                    }
-                    case "black":{
-                        content.put("value", "white");
-                        databasew.update("settings", content, "parameter = 'theme'", null);
-                        theme.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#333333")));
-                        background.setImageResource(R.drawable.ic_android_black_24dp);
-                        layout.setBackgroundColor(Color.parseColor("#FFFFFF"));
-                        cardColor = Color.parseColor("#333333");
-                        textColor = Color.parseColor("#FFFFFF");
-                        break;
-                    }
-                }
-                adapter.update(cardColor, textColor);
-                cursor.close();
                 break;
             }
         }

@@ -67,7 +67,7 @@ public class EditDebtActivity extends AppCompatActivity implements View.OnClickL
         Cursor cursor = database_r.query("settings", new String[]{"value"}, "parameter = 'theme'", null, null, null, null);
         cursor.moveToFirst();
 
-        if (cursor.getString(cursor.getColumnIndex("value")).equals("white")){
+
             id.setTextColor(Color.parseColor("#000000"));
             name.setTextColor(Color.parseColor("#000000"));
             name.setHintTextColor(Color.parseColor("#5b646e"));
@@ -77,7 +77,7 @@ public class EditDebtActivity extends AppCompatActivity implements View.OnClickL
             debt.setHintTextColor(Color.parseColor("#5b646e"));
             head.setTextColor(Color.parseColor("#000000"));
             layout.setBackgroundColor(Color.parseColor("#FFFFFF"));
-        }
+
 
         switch (info.getIntExtra("id", -1)){
             case -1:{

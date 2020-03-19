@@ -9,21 +9,20 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.RelativeLayout;
 import android.widget.SeekBar;
-import android.widget.Spinner;
-import android.widget.TextView;
-import android.widget.Toast;
+
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-public class Settings extends AppCompatActivity implements View.OnClickListener {
+public class Settings extends AppCompatActivity implements View.OnClickListener, SeekBar.OnSeekBarChangeListener {
 
     Button pin;
     FloatingActionButton confirm;
     FloatingActionButton exit;
-    Spinner spinner;
-    SeekBar seekBar;
+    SeekBar seekBarRGB;
+    SeekBar seekBarRed;
+    SeekBar seekBarBlue;
+    SeekBar seekBarGreen;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,17 +32,34 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
         pin = findViewById(R.id.pin_setting);
         confirm = findViewById(R.id.confirm);
         exit = findViewById(R.id.exit);
-        spinner = findViewById(R.id.spinner);
-        seekBar = findViewById(R.id.seekBar);
+        seekBarRGB = findViewById(R.id.seekBarRGB);
+        seekBarRed = findViewById(R.id.seekBarRed);
+        seekBarGreen = findViewById(R.id.seekBarGreen);
+        seekBarBlue = findViewById(R.id.seekBarBlue);
 
         SQLiteDatabase database = new MyDatabase(this).getReadableDatabase();
-        Cursor cursor = database.query("settings", new String[]{"value"}, "parameter = 'theme'", null, null, null, null);
+        Cursor cursor = database.query("settings", new String[]{"value"}, "parameter = 'progressRGB'", null, null, null, null);
         cursor.moveToFirst();
+        seekBarRGB.setProgress(cursor.getInt(cursor.getColumnIndex("value")));
+        cursor = database.query("settings", new String[]{"value"}, "parameter = 'progressRed'", null, null, null, null);
+        cursor.moveToFirst();
+        seekBarRed.setProgress(cursor.getInt(cursor.getColumnIndex("value")));
+        cursor = database.query("settings", new String[]{"value"}, "parameter = 'progressGreen'", null, null, null, null);
+        cursor.moveToFirst();
+        seekBarGreen.setProgress(cursor.getInt(cursor.getColumnIndex("value")));
+        cursor = database.query("settings", new String[]{"value"}, "parameter = 'progressBlue'", null, null, null, null);
+        cursor.moveToFirst();
+        seekBarBlue.setProgress(cursor.getInt(cursor.getColumnIndex("value")));
         database.close();
 
         pin.setOnClickListener(this);
         confirm.setOnClickListener(this);
         exit.setOnClickListener(this);
+        seekBarRGB.setOnSeekBarChangeListener(this);
+        seekBarRed.setOnSeekBarChangeListener(this);
+        seekBarGreen.setOnSeekBarChangeListener(this);
+        seekBarBlue.setOnSeekBarChangeListener(this);
+
 
     }
 
@@ -59,10 +75,24 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
                 Intent intent = new Intent(this, MainActivity.class);
                 SQLiteDatabase database = new MyDatabase(this).getWritableDatabase();
                 ContentValues content = new ContentValues();
-                content.put("value", Integer.toHexString(0xff000000 + (int)(seekBar.getProgress() * 2.55) * 0x10000 + (int)(seekBar.getProgress() * 2.55) * 0x100 + (int)(seekBar.getProgress() * 2.55)));
+                String colorPrimary = Integer.toString( 0xff000000 + (int)(seekBarRed.getProgress() * 2.55) * 0x10000 + (int)(seekBarGreen.getProgress() * 2.55) * 0x100 + (int)(seekBarBlue.getProgress() * 2.55));
+                String colorInverted = Integer.toString( 0xff000000 + (255-(int)(seekBarRed.getProgress() * 2.55)) * 0x10000 + (255-(int)(seekBarGreen.getProgress() * 2.55)) * 0x100 + (255-(int)(seekBarBlue.getProgress() * 2.55)));
+                content.put("value", colorPrimary);
                 database.update("settings", content, "parameter = 'colorPrimary'",null);
                 content.clear();
-                content.put("value", Integer.toHexString(0xff000000 + (255-(int)(seekBar.getProgress() * 2.55)) * 0x10000 + (255-(int)(seekBar.getProgress() * 2.55)) * 0x100 + (255-(int)(seekBar.getProgress() * 2.55))));
+                content.put("value", seekBarRGB.getProgress());
+                database.update("settings", content, "parameter = 'progressRGB'",null);
+                content.clear();
+                content.put("value", seekBarRed.getProgress());
+                database.update("settings", content, "parameter = 'progressRed'",null);
+                content.clear();
+                content.put("value", seekBarGreen.getProgress());
+                database.update("settings", content, "parameter = 'progressGreen'",null);
+                content.clear();
+                content.put("value", seekBarBlue.getProgress());
+                database.update("settings", content, "parameter = 'progressBlue'",null);
+                content.clear();
+                content.put("value", colorInverted);
                 database.update("settings", content, "parameter = 'colorInverted'",null);
                 intent.putExtra("exit_code", -1);
                 database.close();
@@ -75,5 +105,27 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
                 break;
             }
         }
+    }
+
+    @Override
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+        if (seekBar.getId() == R.id.seekBarRGB){
+            seekBarRed.setProgress(progress);
+            seekBarGreen.setProgress(progress);
+            seekBarBlue.setProgress(progress);
+            findViewById(R.id.settings_layout).setBackgroundColor(0xff000000 + (int)(progress*2.55) * 0x10000 + (int)(progress*2.55) * 0x100 + (int)(progress*2.55));
+        }else {
+            findViewById(R.id.settings_layout).setBackgroundColor(0xff000000 + (int)(seekBarRed.getProgress()*2.55) * 0x10000 + (int)(seekBarGreen.getProgress()*2.55) * 0x100 + (int)(seekBarBlue.getProgress()*2.55));
+        }
+    }
+
+    @Override
+    public void onStartTrackingTouch(SeekBar seekBar) {
+
+    }
+
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar) {
+
     }
 }

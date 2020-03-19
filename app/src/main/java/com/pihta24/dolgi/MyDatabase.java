@@ -4,13 +4,14 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.graphics.Color;
 
 import androidx.annotation.Nullable;
 
 public class MyDatabase extends SQLiteOpenHelper {
 
     public final static String DB_NAME = "debts.db";
-    public final static int DB_VERSION = 7;
+    public final static int DB_VERSION = 9;
 
     public final static String TB_DEB_NAME = "debts";
     public final static String COL_ID = "debt_id";
@@ -33,11 +34,27 @@ public class MyDatabase extends SQLiteOpenHelper {
         db.execSQL("CREATE TABLE settings(parameter VARCHAR(50), value VARCHAR(50))");
         ContentValues content = new ContentValues();
         content.put("parameter", "colorPrimary");
-        content.put("value", "0x00000000");
+        content.put("value", ""+ Color.argb(255,0,0,0));
         db.insert("settings", null, content);
         content.clear();
         content.put("parameter", "colorInverted");
-        content.put("value", "0x00000000");
+        content.put("value", ""+ Color.argb(255,255,255,255));
+        db.insert("settings", null, content);
+        content.clear();
+        content.put("parameter", "progressRGB");
+        content.put("value", "0");
+        db.insert("settings", null, content);
+        content.clear();
+        content.put("parameter", "progressRed");
+        content.put("value", "0");
+        db.insert("settings", null, content);
+        content.clear();
+        content.put("parameter", "progressGreen");
+        content.put("value", "0");
+        db.insert("settings", null, content);
+        content.clear();
+        content.put("parameter", "progressBlue");
+        content.put("value", "0");
         db.insert("settings", null, content);
         content.clear();
         content.put("parameter", "pin_activated");
@@ -54,11 +71,11 @@ public class MyDatabase extends SQLiteOpenHelper {
                 ")");
         ContentValues content = new ContentValues();
         content.put("parameter", "colorPrimary");
-        content.put("value", "0x00000000");
+        content.put("value", ""+ Color.argb(255,0,0,0));
         db.insert("settings", null, content);
         content.clear();
         content.put("parameter", "colorInverted");
-        content.put("value", "0x00000000");
+        content.put("value", ""+ Color.argb(255,255,255,255));
         db.insert("settings", null, content);
         content.clear();
     }

@@ -18,10 +18,10 @@ import java.util.ArrayList;
 
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
 
-    Context context;
+    private Context context;
 
-    int cardColor = Color.parseColor("#C0C0C0");
-    int textColor = Color.parseColor("#000000");
+    private int cardColor = Color.parseColor("#C0C0C0");
+    private int textColor = Color.parseColor("#000000");
 
     private LayoutInflater layoutInflater;
     private MyDatabase myDatabase;
