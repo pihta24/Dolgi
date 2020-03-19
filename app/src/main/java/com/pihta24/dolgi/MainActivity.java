@@ -56,17 +56,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Cursor cursor = database.query("settings", new String[]{"value"}, "parameter = 'colorPrimary'", null, null, null, null);
         cursor.moveToFirst();
         primaryColor = Integer.parseInt(cursor.getString(cursor.getColumnIndex("value")));
-        cardColor =Integer.parseInt(cursor.getString(cursor.getColumnIndex("value")));
+        if (primaryColor < 0xffeeeeee)
+            cardColor = Integer.parseInt(cursor.getString(cursor.getColumnIndex("value"))) + 0xff111111;
         cursor = database.query("settings", new String[]{"value"}, "parameter = 'colorInverted'", null, null, null, null);
         cursor.moveToFirst();
         invertedColor = Integer.parseInt(cursor.getString(cursor.getColumnIndex("value")));
-        if (invertedColor < 0xff888888) settings_button.setImageResource(R.drawable.ic_settings_white_24dp);
+        if (invertedColor < 0xff888888)
+            settings_button.setImageResource(R.drawable.ic_settings_white_24dp);
         textColor = invertedColor;
 
-        adapter=new MyAdapter(this);
+        adapter = new MyAdapter(this);
 
         getSupportActionBar().hide();
-        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) hideSystemUI();
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)
+            hideSystemUI();
         getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(this);
 
         add.setOnClickListener(this);
@@ -80,11 +83,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         settings_button.setBackgroundTintList(ColorStateList.valueOf(invertedColor));
         adapter.update(cardColor, textColor);
 
-        switch (info.getIntExtra("exit_code", -2)){
-            case -2:{
+        switch (info.getIntExtra("exit_code", -2)) {
+            case -2: {
                 cursor = database.query("settings", new String[]{"value"}, "parameter = 'pin_activated'", null, null, null, null);
                 cursor.moveToFirst();
-                if(cursor.getString(cursor.getColumnIndex("value")).equals("true")){
+                if (cursor.getString(cursor.getColumnIndex("value")).equals("true")) {
                     cursor = database.query("settings", new String[]{"value"}, "parameter = 'pin_code'", null, null, null, null);
                     cursor.moveToFirst();
                     Intent intent = new Intent(this, Entrance.class);
@@ -93,15 +96,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 break;
             }
-            case 0:{
+            case 0: {
                 Toast.makeText(this, "Изменения отменены", Toast.LENGTH_SHORT).show();
                 break;
             }
-            case 1:{
+            case 1: {
                 Toast.makeText(this, "Изменения сохранены", Toast.LENGTH_SHORT).show();
                 break;
             }
-            case 2:{
+            case 2: {
                 Toast.makeText(this, "Запись удалена", Toast.LENGTH_SHORT).show();
                 break;
             }
@@ -118,20 +121,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
-            case R.id.settings:{
+        switch (v.getId()) {
+            case R.id.settings: {
                 Intent intent = new Intent(this, Settings.class);
                 startActivity(intent);
                 break;
             }
             case R.id.add: {
-                Intent intent = new Intent(this,EditDebtActivity.class);
+                Intent intent = new Intent(this, EditDebtActivity.class);
                 intent.putExtra("id", -1);
                 startActivity(intent);
                 break;
             }
         }
     }
+
     private void hideSystemUI() {
         // Enables regular immersive mode.
         // For "lean back" mode, remove SYSTEM_UI_FLAG_IMMERSIVE.
@@ -151,16 +155,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onSystemUiVisibilityChange(int visibility) {
-        if(visibility == View.SYSTEM_UI_FLAG_VISIBLE && getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            new AsyncTask<Void, Void, Void>(){
+        if (visibility == View.SYSTEM_UI_FLAG_VISIBLE && getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            new AsyncTask<Void, Void, Void>() {
                 @Override
                 protected Void doInBackground(Void... voids) {
                     try {
                         Thread.sleep(3000);
                         publishProgress();
-                    } catch (InterruptedException e) { }
+                    } catch (InterruptedException e) {
+                    }
                     return null;
                 }
+
                 @Override
                 protected void onProgressUpdate(Void... values) {
                     hideSystemUI();

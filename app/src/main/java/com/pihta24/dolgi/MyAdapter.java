@@ -30,13 +30,13 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
     private ArrayList<Double> debts = new ArrayList<>();
     private ArrayList<Integer> ids = new ArrayList<>();
 
-    public MyAdapter(Context context){
+    public MyAdapter(Context context) {
         this.context = context;
         layoutInflater = LayoutInflater.from(context);
         myDatabase = new MyDatabase(context);
     }
 
-    public void update(int cardColor, int textColor){
+    public void update(int cardColor, int textColor) {
         names.clear();
         debts.clear();
         ids.clear();
@@ -45,7 +45,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
         this.textColor = textColor;
 
         SQLiteDatabase database = myDatabase.getReadableDatabase();
-        Cursor cursor = database.query(MyDatabase.TB_DEB_NAME,null,null,null,null,null,null);
+        Cursor cursor = database.query(MyDatabase.TB_DEB_NAME, null, null, null, null, null, null);
         if (cursor.moveToFirst())
             do {
                 names.add(cursor.getString(cursor.getColumnIndex(MyDatabase.COL_NAME)));
@@ -61,15 +61,15 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
     @NonNull
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = layoutInflater.inflate(R.layout.item_debt,parent,false);
+        View v = layoutInflater.inflate(R.layout.item_debt, parent, false);
         return new MyViewHolder(v);
     }
 
     @Override
     public void onBindViewHolder(@NonNull final MyViewHolder holder, int position) {
         holder.name.setText(names.get(position));
-        holder.debt.setText(debts.get(position)+"");
-        holder.id.setText(ids.get(position)+"");
+        holder.debt.setText(debts.get(position) + "");
+        holder.id.setText(ids.get(position) + "");
 
         holder.card.setCardBackgroundColor(cardColor);
         holder.name.setTextColor(textColor);
@@ -78,8 +78,8 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(context,EditDebtActivity.class);
-                intent.putExtra("id",Integer.parseInt(holder.id.getText().toString()));
+                Intent intent = new Intent(context, EditDebtActivity.class);
+                intent.putExtra("id", Integer.parseInt(holder.id.getText().toString()));
                 context.startActivity(intent);
             }
         });
