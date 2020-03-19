@@ -20,7 +20,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="#FFFFFF"
-            android:text="Настройка пин-кода"
+            android:text="Настройки пин-кода"
             android:textSize="25sp" />
 
         <Button
@@ -29,7 +29,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="РЎРѕР·РґР°С‚СЊ" />
+            android:text="Создать" />
     </LinearLayout>
 
     <LinearLayout
@@ -47,7 +47,7 @@
             android:layout_weight="1"
             android:textColor="#FFFFFF"
             android:textSize="25sp"
-            android:text="РўРµРјР°"/>
+            android:text="Тема: "/>
 
         <Spinner
             android:id="@+id/spinner"
