@@ -125,6 +125,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener,
         switch (v.getId()) {
             case R.id.pin_button: {
                 Intent intent = new Intent(this, Entrance.class);
+                intent.putExtra("code", 1);
                 startActivity(intent);
                 break;
             }
@@ -158,6 +159,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener,
             }
             case R.id.exit: {
                 Intent intent = new Intent(this, MainActivity.class);
+                intent.putExtra("exit_code", -1);
                 startActivity(intent);
                 break;
             }

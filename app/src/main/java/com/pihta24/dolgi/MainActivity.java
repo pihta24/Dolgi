@@ -92,6 +92,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     cursor.moveToFirst();
                     Intent intent = new Intent(this, Entrance.class);
                     intent.putExtra("pin_code_hash", cursor.getString(cursor.getColumnIndex("value")));
+                    intent.putExtra("code", 2);
                     startActivity(intent);
                 }
                 break;
