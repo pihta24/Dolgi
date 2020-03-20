@@ -95,6 +95,9 @@ public class Settings extends AppCompatActivity implements View.OnClickListener,
         if (primaryColor < 0xffeeeeee) {
             pin_settings.setCardBackgroundColor(primaryColor + 0xff111111);
             theme_settings.setCardBackgroundColor(primaryColor + 0xff111111);
+        }else{
+            pin_settings.setCardBackgroundColor(primaryColor - 0x00111111);
+            theme_settings.setCardBackgroundColor(primaryColor - 0x00111111);
         }
         text_RGB.setTextColor(invertedColor);
         text_red.setTextColor(invertedColor);
@@ -175,6 +178,9 @@ public class Settings extends AppCompatActivity implements View.OnClickListener,
             if (primaryColor < 0xffeeeeee) {
                 pin_settings.setCardBackgroundColor(primaryColor + 0xff111111);
                 theme_settings.setCardBackgroundColor(primaryColor + 0xff111111);
+            }else{
+                pin_settings.setCardBackgroundColor(primaryColor - 0x00111111);
+                theme_settings.setCardBackgroundColor(primaryColor - 0x00111111);
             }
             text_RGB.setTextColor(invertedColor);
             text_red.setTextColor(invertedColor);

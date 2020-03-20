@@ -56,8 +56,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Cursor cursor = database.query("settings", new String[]{"value"}, "parameter = 'colorPrimary'", null, null, null, null);
         cursor.moveToFirst();
         primaryColor = Integer.parseInt(cursor.getString(cursor.getColumnIndex("value")));
-        if (primaryColor < 0xffeeeeee)
-            cardColor = Integer.parseInt(cursor.getString(cursor.getColumnIndex("value"))) + 0xff111111;
+        if (primaryColor < 0xffeeeeee) cardColor = Integer.parseInt(cursor.getString(cursor.getColumnIndex("value"))) + 0xff111111;
+        else cardColor = Integer.parseInt(cursor.getString(cursor.getColumnIndex("value"))) + 0xff111111;
         cursor = database.query("settings", new String[]{"value"}, "parameter = 'colorInverted'", null, null, null, null);
         cursor.moveToFirst();
         invertedColor = Integer.parseInt(cursor.getString(cursor.getColumnIndex("value")));

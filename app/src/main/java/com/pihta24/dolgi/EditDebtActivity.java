@@ -99,6 +99,7 @@ public class EditDebtActivity extends AppCompatActivity implements View.OnClickL
         head.setTextColor(invertedColor);
         layout.setBackgroundColor(primaryColor);
         if (primaryColor < 0xffeeeeee) debt_card.setCardBackgroundColor(primaryColor + 0xff111111);
+        else debt_card.setCardBackgroundColor(primaryColor - 0x00111111);
 
 
         switch (info.getIntExtra("id", -1)) {
