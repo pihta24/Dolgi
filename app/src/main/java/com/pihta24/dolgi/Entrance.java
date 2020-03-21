@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -274,6 +275,7 @@ public class Entrance extends AppCompatActivity implements View.OnClickListener 
         switch (code){
             case 2:
                 try {
+
                     if (Password.check(password, pin_code)){
                         startActivity(new Intent(this, MainActivity.class).putExtra("exit_code", -1));
                     }else {
@@ -295,20 +297,31 @@ public class Entrance extends AppCompatActivity implements View.OnClickListener 
                 }else{
                     if(firstPassword.equals(password)){
                         Toast.makeText(this, "Пин-код сохранен", Toast.LENGTH_SHORT).show();
-                        SQLiteDatabase database = new MyDatabase(this).getWritableDatabase();
-                        ContentValues content = new ContentValues();
+                        final SQLiteDatabase database = new MyDatabase(this).getWritableDatabase();
+                        final ContentValues content = new ContentValues();
                         content.put("value", "true");
                         database.update("settings", content, "parameter = 'pin_activated'", null);
                         content.clear();
                         content.put("parameter", "pin_code");
-                        try {
-                            content.put("value", Password.getSaltedHash(password));
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                        database.insert("settings", null, content);
-                        database.close();
-                        finish();
+                        new AsyncTask<Void, String, Void>() {
+                            @Override
+                            protected Void doInBackground(Void... voids) {
+                                try {
+                                    String hash = Password.getSaltedHash(password);
+                                    publishProgress(hash);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                                return null;
+                            }
+                            @Override
+                            protected void onProgressUpdate(String... values) {
+                                content.put("value", values[0]);
+                                database.insert("settings", null, content);
+                                database.close();
+                                finish();
+                            }
+                        }.execute();
                     }else{
                         action--;
                         password = "";

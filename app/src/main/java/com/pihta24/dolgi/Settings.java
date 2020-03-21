@@ -142,6 +142,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener,
                 Intent intent = new Intent(this, Entrance.class);
                 intent.putExtra("code", 1);
                 startActivity(intent);
+                finish();
                 break;
             }
             case R.id.pin_button_delete: {
@@ -152,6 +153,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener,
                 intent.putExtra("pin_code_hash", cursor.getString(cursor.getColumnIndex("value")));
                 cursor.close();
                 startActivity(intent);
+                finish();
                 break;
             }
             case R.id.confirm: {
@@ -217,6 +219,8 @@ public class Settings extends AppCompatActivity implements View.OnClickListener,
             text_theme.setTextColor(invertedColor);
             pin_button.setCardBackgroundColor(invertedColor);
             pin_button_text.setTextColor(primaryColor);
+            pin_button_delete.setCardBackgroundColor(invertedColor);
+            pin_button_delete_text.setTextColor(primaryColor);
         }
     }
 
