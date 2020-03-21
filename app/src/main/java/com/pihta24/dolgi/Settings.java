@@ -24,6 +24,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener,
     CardView pin_settings;
     CardView theme_settings;
     CardView pin_button;
+    CardView pin_button_delete;
     FloatingActionButton confirm;
     FloatingActionButton exit;
     TextView text_RGB;
@@ -33,6 +34,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener,
     TextView text_pin;
     TextView text_theme;
     TextView pin_button_text;
+    TextView pin_button_delete_text;
     SeekBar seekBarRGB;
     SeekBar seekBarRed;
     SeekBar seekBarBlue;
@@ -54,6 +56,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener,
         pin_settings = findViewById(R.id.pin_setting_cardView);
         theme_settings = findViewById(R.id.theme_setting_cardView);
         pin_button = findViewById(R.id.pin_button);
+        pin_button_delete = findViewById(R.id.pin_button_delete);
         confirm = findViewById(R.id.confirm);
         exit = findViewById(R.id.exit);
         seekBarRGB = findViewById(R.id.seekBarRGB);
@@ -67,6 +70,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener,
         text_theme = findViewById(R.id.text_theme);
         text_RGB = findViewById(R.id.rgb);
         pin_button_text = findViewById(R.id.pin_button_text);
+        pin_button_delete_text = findViewById(R.id.pin_button_delete_text);
 
         SQLiteDatabase database = new MyDatabase(this).getReadableDatabase();
 
@@ -88,6 +92,15 @@ public class Settings extends AppCompatActivity implements View.OnClickListener,
         cursor = database.query("settings", new String[]{"value"}, "parameter = 'colorInverted'", null, null, null, null);
         cursor.moveToFirst();
         invertedColor = Integer.parseInt(cursor.getString(cursor.getColumnIndex("value")));
+
+        cursor = database.query("settings", new String[]{"value"}, "parameter = 'pin_activated'", null, null, null, null);
+        cursor.moveToFirst();
+
+        if(cursor.getString(cursor.getColumnIndex("value")).equals("true")){
+            pin_button_delete.setVisibility(View.VISIBLE);
+            pin_button_text.setText("Изменить");
+        }
+
         cursor.close();
         database.close();
 
@@ -107,8 +120,10 @@ public class Settings extends AppCompatActivity implements View.OnClickListener,
         text_theme.setTextColor(invertedColor);
         pin_button.setCardBackgroundColor(invertedColor);
         pin_button_text.setTextColor(primaryColor);
+        pin_button_delete.setCardBackgroundColor(invertedColor);
+        pin_button_delete_text.setTextColor(primaryColor);
 
-
+        pin_button_delete.setOnClickListener(this);
         pin_button.setOnClickListener(this);
         confirm.setOnClickListener(this);
         exit.setOnClickListener(this);
@@ -126,6 +141,16 @@ public class Settings extends AppCompatActivity implements View.OnClickListener,
             case R.id.pin_button: {
                 Intent intent = new Intent(this, Entrance.class);
                 intent.putExtra("code", 1);
+                startActivity(intent);
+                break;
+            }
+            case R.id.pin_button_delete: {
+                Intent intent = new Intent(this, Entrance.class);
+                intent.putExtra("code", 0);
+                Cursor cursor = new MyDatabase(this).getReadableDatabase().query("settings", new String[]{"value"}, "parameter = 'pin_code'", null, null, null, null);
+                cursor.moveToFirst();
+                intent.putExtra("pin_code_hash", cursor.getString(cursor.getColumnIndex("value")));
+                cursor.close();
                 startActivity(intent);
                 break;
             }
@@ -242,5 +267,9 @@ public class Settings extends AppCompatActivity implements View.OnClickListener,
                         // Hide the nav bar and status bar
                         | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                         | View.SYSTEM_UI_FLAG_FULLSCREEN);
+    }
+
+    @Override
+    public void onBackPressed() {
     }
 }

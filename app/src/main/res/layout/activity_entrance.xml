@@ -9,7 +9,7 @@
     tools:context=".Entrance">
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/entrance_pin_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@id/numbers"
@@ -85,6 +85,18 @@
                 app:srcCompat="@drawable/number_1" />
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/button2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:layout_weight="1"
+                android:clickable="true"
+                app:backgroundTint="#CCCCCC"
+                app:fabCustomSize="80dp"
+                app:maxImageSize="40dp"
+                app:srcCompat="@drawable/number_2" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/button3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -96,8 +108,14 @@
                 app:maxImageSize="40dp"
                 app:srcCompat="@drawable/number_3" />
 
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+
             <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/button2"
+                android:id="@+id/button4"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
@@ -106,12 +124,7 @@
                 app:backgroundTint="#CCCCCC"
                 app:fabCustomSize="80dp"
                 app:maxImageSize="40dp"
-                app:srcCompat="@drawable/number_2" />
-        </TableRow>
-
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" >
+                app:srcCompat="@drawable/number_4" />
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/button5"
@@ -137,17 +150,6 @@
                 app:maxImageSize="40dp"
                 app:srcCompat="@drawable/number_6" />
 
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/button4"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:layout_weight="1"
-                android:clickable="true"
-                app:backgroundTint="#CCCCCC"
-                app:fabCustomSize="80dp"
-                app:maxImageSize="40dp"
-                app:srcCompat="@drawable/number_4" />
         </TableRow>
 
         <TableRow

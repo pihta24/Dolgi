@@ -2,6 +2,7 @@ package com.pihta24.dolgi;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.ContentValues;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.database.Cursor;
@@ -10,6 +11,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -33,10 +35,14 @@ public class Entrance extends AppCompatActivity implements View.OnClickListener 
     ImageView indicator2;
     ImageView indicator3;
     ImageView indicator4;
+    TextView pin_text;
     int primaryColor;
     int invertedColor;
     private String password = "";
+    private String firstPassword = "";
     int code = 0;
+    int action = 0;
+    String pin_code;
 
 
     @Override
@@ -48,7 +54,8 @@ public class Entrance extends AppCompatActivity implements View.OnClickListener 
 
         Intent info = getIntent();
 
-        code = info.getIntExtra("code", 0);
+        code = info.getIntExtra("code", -1);
+        pin_code = info.getStringExtra("pin_code_hash");
         info.removeExtra("code");
 
         SQLiteDatabase database = new MyDatabase(this).getReadableDatabase();
@@ -77,6 +84,7 @@ public class Entrance extends AppCompatActivity implements View.OnClickListener 
         indicator2 = findViewById(R.id.indicator_2);
         indicator3 = findViewById(R.id.indicator_3);
         indicator4 = findViewById(R.id.indicator_4);
+        pin_text = findViewById(R.id.entrance_pin_text);
         layout = findViewById(R.id.entrance_layout);
 
         button0.setOnClickListener(this);
@@ -91,6 +99,7 @@ public class Entrance extends AppCompatActivity implements View.OnClickListener 
         button9.setOnClickListener(this);
         button_delete.setOnClickListener(this);
         button_cancel.setOnClickListener(this);
+
         button0.setBackgroundTintList(ColorStateList.valueOf(invertedColor));
         button1.setBackgroundTintList(ColorStateList.valueOf(invertedColor));
         button2.setBackgroundTintList(ColorStateList.valueOf(invertedColor));
@@ -101,6 +110,7 @@ public class Entrance extends AppCompatActivity implements View.OnClickListener 
         button7.setBackgroundTintList(ColorStateList.valueOf(invertedColor));
         button8.setBackgroundTintList(ColorStateList.valueOf(invertedColor));
         button9.setBackgroundTintList(ColorStateList.valueOf(invertedColor));
+        pin_text.setTextColor(invertedColor);
         if (invertedColor < 0xff888888) {
             button0.setImageResource(R.drawable.number_0_white);
             button1.setImageResource(R.drawable.number_1_white);
@@ -199,8 +209,7 @@ public class Entrance extends AppCompatActivity implements View.OnClickListener 
                     indicator3.setImageResource(R.drawable.circle_white_24dp);
                     indicator4.setImageResource(R.drawable.circle_white_24dp);
                 }
-                Toast.makeText(this, password, Toast.LENGTH_SHORT).show();
-                finish();
+                password();
                 break;
             case 3:
                 if(primaryColor > 0xff888888){
@@ -259,5 +268,75 @@ public class Entrance extends AppCompatActivity implements View.OnClickListener 
 
     @Override
     public void onBackPressed() {
+    }
+
+    private void password(){
+        switch (code){
+            case 2:
+                try {
+                    if (Password.check(password, pin_code)){
+                        startActivity(new Intent(this, MainActivity.class).putExtra("exit_code", -1));
+                    }else {
+                        pin_text.setText("Попробуйте снова");
+                        password = "";
+                        button_delete.callOnClick();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                break;
+            case 1:
+                if(action == 0){
+                    firstPassword = password;
+                    password = "";
+                    button_delete.callOnClick();
+                    pin_text.setText("Повторите пин-код");
+                    action++;
+                }else{
+                    if(firstPassword.equals(password)){
+                        Toast.makeText(this, "Пин-код сохранен", Toast.LENGTH_SHORT).show();
+                        SQLiteDatabase database = new MyDatabase(this).getWritableDatabase();
+                        ContentValues content = new ContentValues();
+                        content.put("value", "true");
+                        database.update("settings", content, "parameter = 'pin_activated'", null);
+                        content.clear();
+                        content.put("parameter", "pin_code");
+                        try {
+                            content.put("value", Password.getSaltedHash(password));
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        database.insert("settings", null, content);
+                        database.close();
+                        finish();
+                    }else{
+                        action--;
+                        password = "";
+                        firstPassword = "";
+                        pin_text.setText("Введите пин-код");
+                        Toast.makeText(this, "Пин-коды не совпадают.\nПопробуйте снова", Toast.LENGTH_SHORT).show();
+                        button_delete.callOnClick();
+                    }
+                }
+                break;
+            case 0:
+                try {
+                    if (Password.check(password, pin_code)){
+                        SQLiteDatabase database = new MyDatabase(this).getWritableDatabase();
+                        ContentValues content = new ContentValues();
+                        content.put("value", "false");
+                        database.update("settings", content, "parameter = 'pin_activated'", null);
+                        database.delete("settings", "parameter = 'pin_code'", null);
+                        finish();
+                    }else {
+                        pin_text.setText("Попробуйте снова");
+                        password = "";
+                        button_delete.callOnClick();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                break;
+        }
     }
 }

@@ -17,15 +17,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
 
-        <LinearLayout
-            android:id="@+id/pin_setting_layout"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="8dp">
+            android:layout_height="match_parent">
 
             <TextView
                 android:id="@+id/pin_text"
+                android:layout_centerHorizontal="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
@@ -35,28 +33,63 @@
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/pin_button"
-                android:layout_width="match_parent"
-                app:cardCornerRadius="20dp"
+                android:layout_toEndOf="@id/spacer_pin"
+                android:layout_below="@id/pin_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_margin="5dp"
-                android:layout_height="match_parent" >
+                app:cardCornerRadius="20dp">
 
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 
                     <TextView
-                        android:layout_centerInParent="true"
                         android:id="@+id/pin_button_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="20sp"
-                        android:text="Создать" />
+                        android:layout_centerInParent="true"
+                        android:layout_margin="3dp"
+                        android:text="Создать"
+                        android:textSize="20sp" />
                 </RelativeLayout>
 
             </androidx.cardview.widget.CardView>
 
+            <Space
+                android:id="@+id/spacer_pin"
+                android:layout_below="@id/pin_text"
+                android:layout_centerHorizontal="true"
+                android:layout_width="15dp"
+                android:layout_height="wrap_content" />
 
-        </LinearLayout>
+            <androidx.cardview.widget.CardView
+                android:visibility="invisible"
+                android:id="@+id/pin_button_delete"
+                android:layout_below="@id/pin_text"
+                android:layout_toStartOf="@id/spacer_pin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                app:cardCornerRadius="20dp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:id="@+id/pin_button_delete_text"
+                        android:layout_margin="3dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:text="Удалить"
+                        android:textSize="20sp" />
+                </RelativeLayout>
+
+            </androidx.cardview.widget.CardView>
+        </RelativeLayout>
+
     </androidx.cardview.widget.CardView>
 
     <androidx.cardview.widget.CardView
@@ -71,7 +104,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:minHeight="62pt"
+            android:minHeight="70pt"
             android:orientation="horizontal">
 
             <TextView

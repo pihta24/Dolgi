@@ -211,4 +211,8 @@ public class EditDebtActivity extends AppCompatActivity implements View.OnClickL
             }.execute();
         }
     }
+
+    @Override
+    public void onBackPressed() {
+    }
 }
