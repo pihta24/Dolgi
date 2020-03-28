@@ -1,0 +1,27 @@
+
+        Gson gson = new GsonBuilder().setLenient().create();
+
+        Retrofit retrofit = new Retrofit.Builder().baseUrl("http://192.168.0.37:5050/api/method/").addConverterFactory(GsonConverterFactory.create(gson)).build();
+        final MyAPI api = retrofit.create(MyAPI.class);
+
+        findViewById(R.id.buttonLogin).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final TextView textView = findViewById(R.id.textViewLogin);
+                MyAPI.MyRegisterBody body = new MyAPI.MyRegisterBody();
+                body.nick = "test";
+                body.email = "test@test.test";
+                Call<MyAPI.MyResponse> call = api.register(body);
+                call.enqueue(new Callback<MyAPI.MyResponse>() {
+                    @Override
+                    public void onResponse(Call<MyAPI.MyResponse> call, Response<MyAPI.MyResponse> response) {
+                        if (response.isSuccessful())
+                            textView.setText(response.body().response);
+                    }
+
+                    @Override
+                    public void onFailure(Call<MyAPI.MyResponse> call, Throwable t) {
+                    }
+                });
+            }
+        });

@@ -72,6 +72,8 @@ public class Settings extends AppCompatActivity implements View.OnClickListener,
         pin_button_text = findViewById(R.id.pin_button_text);
         pin_button_delete_text = findViewById(R.id.pin_button_delete_text);
 
+        findViewById(R.id.button).setOnClickListener(this);
+
         SQLiteDatabase database = new MyDatabase(this).getReadableDatabase();
 
         Cursor cursor = database.query("settings", new String[]{"value"}, "parameter = 'progressRGB'", null, null, null, null);
@@ -138,6 +140,9 @@ public class Settings extends AppCompatActivity implements View.OnClickListener,
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.button:
+                startActivity(new Intent(this, LoginActivity.class));
+                break;
             case R.id.pin_button: {
                 Intent intent = new Intent(this, Entrance.class);
                 intent.putExtra("code", 1);
