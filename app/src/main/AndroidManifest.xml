@@ -14,12 +14,12 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".RegisterActivity"></activity>
-        <activity android:name=".LoginActivity" />
-        <activity android:name=".Entrance" />
-        <activity android:name=".Settings" />
-        <activity android:name=".EditDebtActivity" />
-        <activity android:name=".MainActivity">
+        <activity android:name=".RegisterActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".LoginActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".Entrance" android:screenOrientation="portrait"/>
+        <activity android:name=".Settings" android:screenOrientation="portrait"/>
+        <activity android:name=".EditDebtActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".MainActivity" android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

@@ -8,17 +8,94 @@
     android:background="@color/colorBackgroundDark"
     tools:context=".LoginActivity">
 
-    <Button
-        android:id="@+id/buttonLogin"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Test" />
 
     <TextView
-        android:layout_below="@id/buttonLogin"
-        android:id="@+id/textViewLogin"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/loginHead"
+        android:textSize="40sp"
         android:layout_width="wrap_content"
-        android:textSize="20sp"
         android:layout_height="wrap_content"
-        android:text="TextView" />
+        android:text="Вход" />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/loginInfoCard"
+        android:layout_margin="10dp"
+        app:cardCornerRadius="20dp"
+        android:layout_centerInParent="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <TableLayout
+            android:padding="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" >
+
+                <TextView
+                    android:id="@+id/loginNickText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Ник/e-mail:" />
+
+                <EditText
+                    android:id="@+id/loginNick"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:inputType="textPersonName" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" >
+
+                <TextView
+                    android:id="@+id/loginPasswordText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Пароль:" />
+
+                <EditText
+                    android:id="@+id/loginPassword"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:inputType="textPassword" />
+            </TableRow>
+        </TableLayout>
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/loginButtonsCard"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="15dp"
+        app:cardCornerRadius="15dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <Button
+                android:layout_margin="5dp"
+                android:id="@+id/buttonLogin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Войти" />
+
+            <Button
+                android:layout_margin="5dp"
+                android:id="@+id/buttonToRegister"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Создать аккаунт" />
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
 </RelativeLayout>
