@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Долги</string>
+    <string name="api_address">https://dolgiapp.pythonanywhere.com//api/method/</string>
+    <string name="api_address1">http://192.168.1.37:5050/api/method/</string>
 </resources>

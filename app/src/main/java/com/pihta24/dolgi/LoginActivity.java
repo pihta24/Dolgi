@@ -3,6 +3,7 @@ package com.pihta24.dolgi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
+import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -12,6 +13,17 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.gson.GsonBuilder;
+
+import java.net.ConnectException;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
@@ -29,6 +41,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     int primaryColor;
     int invertedColor;
 
+    Retrofit retrofit;
+    MyAPI api;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +52,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         getSupportActionBar().hide();
 
         SQLiteDatabase database = new MyDatabase(this).getReadableDatabase();
+        retrofit = new Retrofit.Builder().baseUrl(getString(R.string.api_address)).addConverterFactory(GsonConverterFactory.create(new GsonBuilder().setLenient().create())).build();
+        api = retrofit.create(MyAPI.class);
 
         Cursor cursor = database.query("settings", new String[]{"value"}, "parameter = 'colorPrimary'", null, null, null, null);
         cursor.moveToFirst();
@@ -89,10 +105,50 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.buttonLogin:{
+                if (password.getText().toString().length() > 0 &&
+                    nick.getText().toString().length() > 0) {
+                    MyAPI.MyGetTokenBody body = new MyAPI.MyGetTokenBody();
+                    body.email_nick = nick.getText().toString();
+                    body.password = password.getText().toString();
+                    api.get_access_token(body).enqueue(new Callback<MyAPI.MyResponse>() {
+                        @Override
+                        public void onResponse(Call<MyAPI.MyResponse> call, Response<MyAPI.MyResponse> response) {
+                            if (response.isSuccessful()) {
+                                switch (response.body().response) {
+                                    case "user not found": {
+                                        Toast.makeText(LoginActivity.this, "Неверный логин", Toast.LENGTH_SHORT).show();
+                                        break;
+                                    }
+                                    case "access denied":{
+                                        Toast.makeText(LoginActivity.this, "Неверный пароль", Toast.LENGTH_SHORT).show();
+                                        break;
+                                    }
+                                    default: {
+                                        SQLiteDatabase database = new MyDatabase(getBaseContext()).getWritableDatabase();
+                                        ContentValues content = new ContentValues();
+                                        content.put("value", response.body().response);
+                                        database.update("settings", content, "parameter = 'token'", null);
+                                        database.close();
+                                        startActivity(new Intent(getBaseContext(), MainActivity.class));
+                                    }
+                                }
+                            }
+                        }
+                        @Override
+                        public void onFailure(Call<MyAPI.MyResponse> call, Throwable t) {
+                            if (t instanceof ConnectException){
+                                Toast.makeText(getBaseContext(), "Нет подключения к интернету", Toast.LENGTH_SHORT).show();
+                                startActivity(new Intent(getBaseContext(), NoConnection.class));
+                            }
+                        }
+                    });
+                }else
+                    Toast.makeText(this, "Заполните все поля", Toast.LENGTH_SHORT).show();
                 break;
             }
             case R.id.buttonToRegister:{
                 startActivity(new Intent(this, RegisterActivity.class));
+                finish();
                 break;
             }
         }

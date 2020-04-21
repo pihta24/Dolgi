@@ -3,13 +3,13 @@ package com.pihta24.dolgi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.content.Intent;
 import android.content.res.ColorStateList;
-import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.AsyncTask;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.RelativeLayout;
@@ -17,15 +17,14 @@ import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import java.util.regex.Pattern;
-
-public class MainActivity extends AppCompatActivity implements View.OnClickListener, View.OnSystemUiVisibilityChangeListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, SwipeRefreshLayout.OnRefreshListener {
 
     MyDatabase myDatabase;
     MyAdapter adapter;
     FloatingActionButton add;
     RelativeLayout layout;
     FloatingActionButton settings_button;
+    static SwipeRefreshLayout update;
     int primaryColor;
     int invertedColor;
     int cardColor;
@@ -36,23 +35,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
-
+        getSupportActionBar().hide();
 
         add = findViewById(R.id.add);
         layout = findViewById(R.id.layout_main);
         settings_button = findViewById(R.id.settings);
+        update = findViewById(R.id.refresh);
 
         Intent info = getIntent();
 
         myDatabase = new MyDatabase(this);
-
         SQLiteDatabase database = myDatabase.getReadableDatabase();
 
         Cursor cursor = database.query("settings", new String[]{"value"}, "parameter = 'colorPrimary'", null, null, null, null);
         cursor.moveToFirst();
         primaryColor = Integer.parseInt(cursor.getString(cursor.getColumnIndex("value")));
         if (primaryColor < 0xffeeeeee) cardColor = Integer.parseInt(cursor.getString(cursor.getColumnIndex("value"))) + 0xff111111;
-        else cardColor = Integer.parseInt(cursor.getString(cursor.getColumnIndex("value"))) + 0xff111111;
+        else cardColor = Integer.parseInt(cursor.getString(cursor.getColumnIndex("value"))) - 0x00111111;
         cursor = database.query("settings", new String[]{"value"}, "parameter = 'colorInverted'", null, null, null, null);
         cursor.moveToFirst();
         invertedColor = Integer.parseInt(cursor.getString(cursor.getColumnIndex("value")));
@@ -62,13 +61,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         adapter = new MyAdapter(this);
 
-        getSupportActionBar().hide();
-        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)
-            hideSystemUI();
-        getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(this);
-
         add.setOnClickListener(this);
         settings_button.setOnClickListener(this);
+        update.setOnRefreshListener(this);
 
         RecyclerView rw = findViewById(R.id.recycler);
         rw.setLayoutManager(new LinearLayoutManager(this));
@@ -76,8 +71,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         layout.setBackgroundColor(primaryColor);
         settings_button.setBackgroundTintList(ColorStateList.valueOf(invertedColor));
-        adapter.update(cardColor, textColor);
+        update.setColorSchemeColors(Color.RED, Color.parseColor("#FFA500"), Color.YELLOW, Color.GREEN, Color.parseColor("#42AAFF"), Color.BLUE, Color.parseColor("#8B00FF"));
 
+        adapter.update(cardColor, textColor);
         switch (info.getIntExtra("exit_code", -2)) {
             case -2: {
                 cursor = database.query("settings", new String[]{"value"}, "parameter = 'pin_activated'", null, null, null, null);
@@ -105,6 +101,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             }
         }
+        cursor = database.query("settings", new String[]{"value"}, "parameter = 'token'", null, null, null, null);
+        cursor.moveToFirst();
+        if (cursor.getString(cursor.getColumnIndex("value")).equals("0"))
+            startActivity(new Intent(this, LoginActivity.class));
         info.removeExtra("exit_code");
         cursor.close();
     }
@@ -132,43 +132,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private void hideSystemUI() {
-        // Enables regular immersive mode.
-        // For "lean back" mode, remove SYSTEM_UI_FLAG_IMMERSIVE.
-        // Or for "sticky immersive," replace it with SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-        View decorView = getWindow().getDecorView();
-        decorView.setSystemUiVisibility(
-                View.SYSTEM_UI_FLAG_IMMERSIVE
-                        // Set the content to appear under the system bars so that the
-                        // content doesn't resize when the system bars hide and show.
-                        | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                        // Hide the nav bar and status bar
-                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_FULLSCREEN);
-    }
-
     @Override
-    public void onSystemUiVisibilityChange(int visibility) {
-        if (visibility == View.SYSTEM_UI_FLAG_VISIBLE && getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            new AsyncTask<Void, Void, Void>() {
-                @Override
-                protected Void doInBackground(Void... voids) {
-                    try {
-                        Thread.sleep(3000);
-                        publishProgress();
-                    } catch (InterruptedException e) {
-                    }
-                    return null;
-                }
-
-                @Override
-                protected void onProgressUpdate(Void... values) {
-                    hideSystemUI();
-                }
-            }.execute();
-        }
+    public void onRefresh() {
+        adapter.update(cardColor, textColor);
     }
 
     @Override

@@ -17,6 +17,8 @@ import android.widget.Toast;
 
 import com.google.gson.GsonBuilder;
 
+import java.net.ConnectException;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -47,6 +49,9 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     int primaryColor;
     int invertedColor;
 
+    Retrofit retrofit;
+    MyAPI api;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,6 +60,8 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         getSupportActionBar().hide();
 
         SQLiteDatabase database = new MyDatabase(this).getReadableDatabase();
+        retrofit = new Retrofit.Builder().baseUrl(getString(R.string.api_address)).addConverterFactory(GsonConverterFactory.create(new GsonBuilder().setLenient().create())).build();
+        api = retrofit.create(MyAPI.class);
 
         Cursor cursor = database.query("settings", new String[]{"value"}, "parameter = 'colorPrimary'", null, null, null, null);
         cursor.moveToFirst();
@@ -131,53 +138,56 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                         password_repeat.getText().toString().length() > 0){
                     if (agreement.isChecked()){
                         if(password.getText().toString().equals(password_repeat.getText().toString())) {
-                            Retrofit retrofit = new Retrofit.Builder().baseUrl("http://192.168.1.37:5050/api/method/").addConverterFactory(GsonConverterFactory.create(new GsonBuilder().setLenient().create())).build();
                             MyAPI.MyRegisterUserBody body = new MyAPI.MyRegisterUserBody();
                             body.email = email.getText().toString();
                             body.name = name.getText().toString();
                             body.last_name = last_name.getText().toString();
                             body.nick = nick.getText().toString();
                             body.password = password.getText().toString();
-                            retrofit.create(MyAPI.class).register_user(body).enqueue(new Callback<MyAPI.MyResponse>() {
+                            api.register_user(body).enqueue(new Callback<MyAPI.MyResponse>() {
                                 @Override
                                 public void onResponse(Call<MyAPI.MyResponse> call, Response<MyAPI.MyResponse> response) {
-                                    switch (response.body().response) {
-                                        case "ok": {
-                                            Toast.makeText(RegisterActivity.this, "Аккаунт зарегестрирован", Toast.LENGTH_SHORT).show();
-                                            startActivity(new Intent(getBaseContext(), LoginActivity.class));
-                                            break;
-                                        }
-                                        case "this email has been already taken": {
-                                            Toast.makeText(RegisterActivity.this, "Данный e-mail занят", Toast.LENGTH_SHORT).show();
-                                            break;
-                                        }
-                                        case "this nick has been already taken": {
-                                            Toast.makeText(RegisterActivity.this, "Данное имя пользователя занято", Toast.LENGTH_SHORT).show();
-                                            break;
-                                        }
-                                        case "not email": {
-                                            Toast.makeText(RegisterActivity.this, "Пожалуйста введите e-mail", Toast.LENGTH_SHORT).show();
-                                            break;
-                                        }
-                                        case "nick length less than 3": {
-                                            Toast.makeText(RegisterActivity.this, "Длинна имени пользователя должна быть больше 3", Toast.LENGTH_SHORT).show();
-                                            break;
-                                        }
-                                        default: {
-                                            Toast.makeText(RegisterActivity.this, "Произошла ошибка на стороне сервера", Toast.LENGTH_SHORT).show();
+                                    if (response.isSuccessful()) {
+                                        switch (response.body().response) {
+                                            case "ok": {
+                                                Toast.makeText(RegisterActivity.this, "Аккаунт зарегестрирован", Toast.LENGTH_SHORT).show();
+                                                startActivity(new Intent(getBaseContext(), LoginActivity.class));
+                                                break;
+                                            }
+                                            case "this email has been already taken": {
+                                                Toast.makeText(RegisterActivity.this, "Данный e-mail занят", Toast.LENGTH_SHORT).show();
+                                                break;
+                                            }
+                                            case "this nick has been already taken": {
+                                                Toast.makeText(RegisterActivity.this, "Данное имя пользователя занято", Toast.LENGTH_SHORT).show();
+                                                break;
+                                            }
+                                            case "not email": {
+                                                Toast.makeText(RegisterActivity.this, "Пожалуйста введите e-mail", Toast.LENGTH_SHORT).show();
+                                                break;
+                                            }
+                                            case "nick length less than 3": {
+                                                Toast.makeText(RegisterActivity.this, "Длинна имени пользователя должна быть больше 3", Toast.LENGTH_SHORT).show();
+                                                break;
+                                            }
+                                            default: {
+                                                Toast.makeText(RegisterActivity.this, "Произошла ошибка на стороне сервера", Toast.LENGTH_SHORT).show();
+                                            }
                                         }
                                     }
                                 }
-
                                 @Override
                                 public void onFailure(Call<MyAPI.MyResponse> call, Throwable t) {
-
+                                    if (t instanceof ConnectException){
+                                        Toast.makeText(getBaseContext(), "Нет подключения к интернету", Toast.LENGTH_SHORT).show();
+                                        startActivity(new Intent(getBaseContext(), NoConnection.class));
+                                    }
                                 }
                             });
                         }else
                             Toast.makeText(this, "Пароли не совпадают", Toast.LENGTH_SHORT).show();
                     }else
-                        Toast.makeText(this, "Прииете пользовательское соглашение и политику конфиденциальности", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "Примиете пользовательское соглашение и политику конфиденциальности", Toast.LENGTH_SHORT).show();
                 }else
                     Toast.makeText(this, "Заполните все поля", Toast.LENGTH_SHORT).show();
                 break;

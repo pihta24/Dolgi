@@ -4,15 +4,13 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
-import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.ColorStateList;
-import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
@@ -20,8 +18,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.gson.GsonBuilder;
 
-public class EditDebtActivity extends AppCompatActivity implements View.OnClickListener, View.OnSystemUiVisibilityChangeListener {
+import java.net.ConnectException;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
+public class EditDebtActivity extends AppCompatActivity implements View.OnClickListener{
 
     SQLiteDatabase database_r;
     SQLiteDatabase database_w;
@@ -41,13 +48,14 @@ public class EditDebtActivity extends AppCompatActivity implements View.OnClickL
     int primaryColor;
     int invertedColor;
 
+    MyAPI api;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
+        api = new Retrofit.Builder().baseUrl(getString(R.string.api_address)).addConverterFactory(GsonConverterFactory.create(new GsonBuilder().setLenient().create())).build().create(MyAPI.class);
+
         getSupportActionBar().hide();
-        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)
-            hideSystemUI();
-        getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(this);
 
         super.onCreate(savedInstanceState);
         Intent info = getIntent();
@@ -108,11 +116,33 @@ public class EditDebtActivity extends AppCompatActivity implements View.OnClickL
             }
             default: {
                 id.setText("ID: " + info.getIntExtra("id", -1));
-                cursor = database_r.query(MyDatabase.TB_DEB_NAME, null, MyDatabase.COL_ID + " = " + info.getIntExtra("id", 1), null, null, null, null);
+                MyAPI.MyGetOneBody body = new MyAPI.MyGetOneBody();
+                body.id = info.getIntExtra("id", -1);
+                cursor = database_r.query("settings", new String[]{"value"}, "parameter = 'token'", null, null, null, null);
                 cursor.moveToFirst();
-                name.setText(cursor.getString(cursor.getColumnIndex(MyDatabase.COL_NAME)));
-                lastName.setText(cursor.getString(cursor.getColumnIndex(MyDatabase.COL_LAST_NAME)));
-                debt.setText(cursor.getDouble(cursor.getColumnIndex(MyDatabase.COL_SUM)) + "");
+                body.id_token = cursor.getString(cursor.getColumnIndex("value"));
+                cursor.close();
+                api.get_one(body).enqueue(new Callback<MyAPI.MyDatabaseResponse>() {
+                    @Override
+                    public void onResponse(Call<MyAPI.MyDatabaseResponse> call, Response<MyAPI.MyDatabaseResponse> response) {
+                        if (response.isSuccessful()) {
+                            if (response.body().response.equals("ok") && response.body().data != null) {
+                                name.setText(response.body().data.get(0).name);
+                                lastName.setText(response.body().data.get(0).lastname);
+                                debt.setText(Double.toString(response.body().data.get(0).debt));
+                            } else if (response.body().response.equals("not valid token")) {
+                                Toast.makeText(EditDebtActivity.this, "Ошибка авторизации\nВойдите заново", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    }
+                    @Override
+                    public void onFailure(Call<MyAPI.MyDatabaseResponse> call, Throwable t) {
+                        if (t instanceof ConnectException){
+                            Toast.makeText(getBaseContext(), "Нет подключения к интернету", Toast.LENGTH_SHORT).show();
+                            startActivity(new Intent(getBaseContext(), NoConnection.class));
+                        }
+                    }
+                });
             }
         }
         info.removeExtra("id");
@@ -127,18 +157,47 @@ public class EditDebtActivity extends AppCompatActivity implements View.OnClickL
                 intent.putExtra("exit_code", 1);
                 if (name.getText().toString().length() > 0 && lastName.getText().toString().length() > 0 && debt.getText().toString().length() > 0) {
                     intent.putExtra("exit_code", 1);
+                    MyAPI.MyAddToDatabaseBody body = new MyAPI.MyAddToDatabaseBody();
+                    Cursor cursor = database_r.query("settings", new String[]{"value"}, "parameter = 'token'", null, null, null, null);
+                    cursor.moveToFirst();
+                    body.id_token = cursor.getString(cursor.getColumnIndex("value"));
+                    cursor.close();
+                    body.data = MyAPI.MyDatabaseNode.create(0, name.getText().toString(), lastName.getText().toString(), "none", Double.parseDouble(debt.getText().toString()), "to_me");
                     if (id.getText().toString().equals("Новый долг")) {
-                        ContentValues content = new ContentValues();
-                        content.put(MyDatabase.COL_NAME, name.getText().toString());
-                        content.put(MyDatabase.COL_LAST_NAME, lastName.getText().toString());
-                        content.put(MyDatabase.COL_SUM, Double.parseDouble(debt.getText().toString()));
-                        database_w.insert(MyDatabase.TB_DEB_NAME, null, content);
-                    } else {
-                        ContentValues content = new ContentValues();
-                        content.put(MyDatabase.COL_NAME, name.getText().toString());
-                        content.put(MyDatabase.COL_LAST_NAME, lastName.getText().toString());
-                        content.put(MyDatabase.COL_SUM, Double.parseDouble(debt.getText().toString()));
-                        database_w.update(MyDatabase.TB_DEB_NAME, content, MyDatabase.COL_ID + " = " + id.getText().toString().split(" ")[1], null);
+                        api.add_to_database(body).enqueue(new Callback<MyAPI.MyResponse>() {
+                            @Override
+                            public void onResponse(Call<MyAPI.MyResponse> call, Response<MyAPI.MyResponse> response) {
+                                if (response.isSuccessful()) {
+                                    if (response.body().response.equals("not valid token")) {
+                                        Toast.makeText(EditDebtActivity.this, "Ошибка авторизации\nВойдите заново", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            }
+                            @Override
+                            public void onFailure(Call<MyAPI.MyResponse> call, Throwable t) {
+                                if (t instanceof ConnectException){
+                                    Toast.makeText(getBaseContext(), "Нет подключения к интернету", Toast.LENGTH_SHORT).show();
+                                    startActivity(new Intent(getBaseContext(), NoConnection.class)); }
+                            }
+                        });
+                    }else{
+                        body.data.id = Integer.parseInt(id.getText().toString().split(" ")[1]);
+                        api.update_database(body).enqueue(new Callback<MyAPI.MyResponse>() {
+                            @Override
+                            public void onResponse(Call<MyAPI.MyResponse> call, Response<MyAPI.MyResponse> response) {
+                                if (response.isSuccessful()) {
+                                    if (response.body().response.equals("not valid token")) {
+                                        Toast.makeText(EditDebtActivity.this, "Ошибка авторизации\nВойдите заново", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            }
+                            @Override
+                            public void onFailure(Call<MyAPI.MyResponse> call, Throwable t) {
+                                if (t instanceof ConnectException){
+                                    Toast.makeText(getBaseContext(), "Нет подключения к интернету", Toast.LENGTH_SHORT).show();
+                                    startActivity(new Intent(getBaseContext(), NoConnection.class)); }
+                            }
+                        });
                     }
                     startActivity(intent);
                 } else {
@@ -159,8 +218,29 @@ public class EditDebtActivity extends AppCompatActivity implements View.OnClickL
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
+                        MyAPI.MyGetOneBody body = new MyAPI.MyGetOneBody();
+                        body.id = Integer.parseInt(id.getText().toString().split(" ")[1]);
+                        Cursor cursor = database_r.query("settings", new String[]{"value"}, "parameter = 'token'", null, null, null, null);
+                        cursor.moveToFirst();
+                        body.id_token = cursor.getString(cursor.getColumnIndex("value"));
+                        cursor.close();
+                        api.delete_from_database(body).enqueue(new Callback<MyAPI.MyDatabaseResponse>() {
+                            @Override
+                            public void onResponse(Call<MyAPI.MyDatabaseResponse> call, Response<MyAPI.MyDatabaseResponse> response) {
+                                if (response.isSuccessful()) {
+                                    if (response.body().response.equals("not valid token")) {
+                                        Toast.makeText(EditDebtActivity.this, "Ошибка авторизации\nВойдите заново", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            }
+                            @Override
+                            public void onFailure(Call<MyAPI.MyDatabaseResponse> call, Throwable t) {
+                                if (t instanceof ConnectException){
+                                    Toast.makeText(getBaseContext(), "Нет подключения к интернету", Toast.LENGTH_SHORT).show();
+                                    startActivity(new Intent(getBaseContext(), NoConnection.class)); }
+                            }
+                        });
                         intent.putExtra("exit_code", 2);
-                        database_w.delete(MyDatabase.TB_DEB_NAME, MyDatabase.COL_ID + " = " + id.getText().toString().split(" ")[1], null);
                         startActivity(intent);
                     }
                 });
@@ -174,39 +254,6 @@ public class EditDebtActivity extends AppCompatActivity implements View.OnClickL
                 dialog.show();
                 break;
             }
-        }
-    }
-
-    private void hideSystemUI() {
-        View decorView = getWindow().getDecorView();
-        decorView.setSystemUiVisibility(
-                View.SYSTEM_UI_FLAG_IMMERSIVE
-                        | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_FULLSCREEN);
-    }
-
-    @Override
-    public void onSystemUiVisibilityChange(int visibility) {
-        if (visibility == View.SYSTEM_UI_FLAG_VISIBLE && getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            new AsyncTask<Void, Void, Void>() {
-                @Override
-                protected Void doInBackground(Void... voids) {
-                    try {
-                        Thread.sleep(3000);
-                        publishProgress();
-                    } catch (InterruptedException ignored) {
-                    }
-                    return null;
-                }
-
-                @Override
-                protected void onProgressUpdate(Void... values) {
-                    hideSystemUI();
-                }
-            }.execute();
         }
     }
 
